@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30225.117
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "Incinerator", "Incinerator.pyproj", "{EACBE933-7DC1-48FE-81E3-CBF09839575D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EACBE933-7DC1-48FE-81E3-CBF09839575D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EACBE933-7DC1-48FE-81E3-CBF09839575D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E664EE66-83C6-42B0-A403-ABC0B2EDCA63}
+	EndGlobalSection
+EndGlobal
