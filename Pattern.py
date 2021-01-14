@@ -50,17 +50,15 @@ class Pattern:
             self.place = self.place + (self.lengthOfSixteenthNote * 4)
         return
 
+    def GetPattern(self):
+        return self.pattern
+
     def GetLength(self):
         return self.place
 
-    def TransposePattern(self, numberOfOctavesToTranspose):
+    def GetMIDIData(self, instrument, place, register):
         for i in range(0, len(self.pattern)):
-            self.pattern[i].TransposeNote(numberOfOctavesToTranspose)
-        return
-
-    def GetMIDIData(self, instrument, place):
-        for i in range(0, len(self.pattern)):
-            instrument.notes.append(self.pattern[i].GetMIDIData(place))
+            instrument.notes.append(self.pattern[i].GetMIDIData(place, register))
         return
 
 
