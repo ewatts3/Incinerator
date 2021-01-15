@@ -16,8 +16,9 @@ class Composition:
             if(i % 2 == 0):
                 register = register - 1
 
-        self.CreateComposition()
         #self.CheckPatterns()
+
+        self.CreateComposition()
         self.WriteFile()
         return
 
@@ -29,43 +30,45 @@ class Composition:
     def CreateComposition(self):
         allVoicesDone = False
         place = 0
+        vl = len(self.voices) #voices length
 
         while self.CheckIfAllVoicesAreDone() is False:
+            #we only want to add something when it's on a proper eighth note beat to avoid innappropriate polyrhythms
+            for w in range(0, vl):
+                while(self.voices[w].IsNotOnAnEighthNoteBeat(self.lengthOfSixteenthNote)):
+                    self.voices[w].AddPattern()   
+                    
+            currentState = self.GetCurrentState()
 
-            #largestPlaceIndex = self.GetLargestPlace()
-            largestPlaceIndex = -1
+            #ensure that all voices are within 2 patterns of each other
+            mostAhead = max(currentState)
+            for z in range(0, vl):
+                if self.voices[z].GetCurrentPattern() < (mostAhead - 2):
+                    self.voices[z].ChangePattern()
 
-            for i in range(0, len(self.voices)):
-                if i != largestPlaceIndex:
-                    if self.voices[i].IsNotOnLastPattern() is True:
-                        if((self.voices[i].GetPlace() % (self.lengthOfSixteenthNote * 4)) != 0): #we only want to add something when it's on a quarter note beat to avoid innappropriate polyrhythms
-                            self.voices[i].AddPattern()
+            #decide when to change - more likely has time goes on
+            for x in range(0, vl):
+                if random.randint(0, 180) < self.voices[x].GetTimeOnCurrentPattern(): #180 - 90 (max length) * 2 / 25% chance at 45 seconds (optimal minimum length)
+                    self.voices[x].ChangePattern()
 
-                        if (self.voices[i].GetTimeOnCurrentPattern() >= 45 and self.voices[i].GetTimeOnCurrentPattern() < 90):
-                            if(random.randint(0, 9) == 0):
-                                self.voices[i].ChangePattern()
-                            else:
-                                self.voices[i].AddPattern()
-                        elif (self.voices[i].GetTimeOnCurrentPattern() < 45):
-                            self.voices[i].AddPattern()
-                        elif(self.voices[i].GetTimeOnCurrentPattern() >= 90):
-                            self.voices[i].ChangePattern()
+            #ensure voices don't go on for too long
+            for y in range(0, vl):
+                if(self.voices[y].GetTimeOnCurrentPattern() >= 90):
+                    self.voices[y].ChangePattern()
 
-                        #if(self.voices[i].GetTimeOnCurrentPattern() < 45):
-                        #    self.voices[i].AddPattern()
-                        #elif(self.voices[i].GetTimeOnCurrentPattern() > 90):
-                        #    self.voices[i].ChangePattern() 
-
+            self.GoToNextState()
         return
 
-    def GetLargestPlace(self):
-        largestPlace = 0
-        largestPlaceIndex = 0
+    def GetCurrentState(self):
+        currentState = []
+        for j in range(0, len(self.voices)):
+            currentState.append(self.voices[j].GetCurrentPattern())
+        return currentState
+
+    def GoToNextState(self):
         for i in range(0, len(self.voices)):
-            if self.voices[i].GetPlace() > largestPlace:
-                largestPlace = self.voices[i].GetPlace()
-                largestPlaceIndex = i
-        return largestPlaceIndex
+            self.voices[i].AddPattern()
+        return
 
     def CheckIfAllVoicesAreDone(self):
         allVoicesDone = True
@@ -79,19 +82,17 @@ class Composition:
     def CheckPatterns(self):
         for i in range(0, len(self.voices[0].GetAllPatterns())):
             self.voices[0].AddPattern()
-            self.voices[0].AddPattern()
-            self.voices[0].AddPattern()
             self.voices[0].ChangePattern()
         return
 
     def WriteFile(self):
-        instrument = 1
+        instrumentNumberForOutput = 1
         for i in range(0, len(self.voices)):
             pm = pretty_midi.PrettyMIDI()
             pm.instruments.append(self.voices[i].GetMIDIData())
-            fileName = ('instrument' + str(instrument) + '.mid')
+            fileName = ('instrument' + str(instrumentinstrumentNumberForOutput) + '.mid')
             pm.write(fileName)
-            instrument = instrument + 1
+            instrumentNumberForOutput = instrumentinstrumentNumberForOutput + 1
         return
 
-Composition(8, 120) #tempo in quarter bpms
+Composition(7, 120) #tempo in quarter bpms

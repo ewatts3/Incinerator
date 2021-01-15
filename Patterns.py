@@ -7,6 +7,8 @@ class Patterns:
         self.register = register
         self.allPatterns = []
 
+        self.CreateFirstPattern()
+        self.CreateSecondPattern()
         self.CreateThirdPattern()
         self.CreateFourthPattern()
         self.CreateFifthPattern()
@@ -61,6 +63,12 @@ class Patterns:
 
     def GetAllPatterns(self):
         return self.allPatterns
+
+    def CreateFirstPattern(self):
+        return
+
+    def CreateSecondPattern(self):
+        return
 
     def CreateThirdPattern(self):
         thirdPattern = Pattern(self.lengthOfSixteenthNote)
@@ -248,30 +256,114 @@ class Patterns:
         return
 
     def CreateTwentySecondthPattern(self):
+        twentySecondthPattern = Pattern(self.lengthOfSixteenthNote)
+        twentySecondthPattern.AddNote('E', self.register, 'dottedQuarter')
+        twentySecondthPattern.AddNote('E', self.register, 'dottedQuarter')
+        twentySecondthPattern.AddNote('E', self.register, 'dottedQuarter')
+        twentySecondthPattern.AddNote('E', self.register, 'dottedQuarter')
+        twentySecondthPattern.AddNote('E', self.register, 'dottedQuarter')
+        twentySecondthPattern.AddNote('F#', self.register, 'dottedQuarter')
+        twentySecondthPattern.AddNote('G', self.register, 'dottedQuarter')
+        twentySecondthPattern.AddNote('A', self.register, 'dottedQuarter')
+        twentySecondthPattern.AddNote('B', self.register, 'eighth')
+        self.allPatterns.append(twentySecondthPattern)
         return
 
     def CreateTwentyThirdPattern(self):
+        twentyThirdPattern = Pattern(self.lengthOfSixteenthNote)
+        twentyThirdPattern.AddNote('E', self.register, 'eighth')
+        twentyThirdPattern.AddNote('F#', self.register, 'dottedQuarter')
+        twentyThirdPattern.AddNote('F#', self.register, 'dottedQuarter')
+        twentyThirdPattern.AddNote('F#', self.register, 'dottedQuarter')
+        twentyThirdPattern.AddNote('F#', self.register, 'dottedQuarter')
+        twentyThirdPattern.AddNote('F#', self.register, 'dottedQuarter')
+        twentyThirdPattern.AddNote('G', self.register, 'dottedQuarter')
+        twentyThirdPattern.AddNote('A', self.register, 'dottedQuarter')
+        twentyThirdPattern.AddNote('B', self.register, 'quarter')
+        self.allPatterns.append(twentyThirdPattern)
         return
 
     def CreateTwentyFourthPattern(self):
+        twentyFourthPattern = Pattern(self.lengthOfSixteenthNote)
+        twentyFourthPattern.AddNote('E', self.register, 'eighth')
+        twentyFourthPattern.AddNote('F#', self.register, 'eighth')
+        twentyFourthPattern.AddNote('G', self.register, 'dottedQuarter')
+        twentyFourthPattern.AddNote('G', self.register, 'dottedQuarter')
+        twentyFourthPattern.AddNote('G', self.register, 'dottedQuarter')
+        twentyFourthPattern.AddNote('G', self.register, 'dottedQuarter')
+        twentyFourthPattern.AddNote('G', self.register, 'dottedQuarter')
+        twentyFourthPattern.AddNote('A', self.register, 'dottedQuarter')
+        twentyFourthPattern.AddNote('B', self.register, 'eighth')
+        self.allPatterns.append(twentyFourthPattern)
         return
 
     def CreateTwentyFifthPattern(self):
+        twentyFifthPattern = Pattern(self.lengthOfSixteenthNote)
+        twentyFifthPattern.AddNote('E', self.register, 'eighth')
+        twentyFifthPattern.AddNote('F#', self.register, 'eighth')
+        twentyFifthPattern.AddNote('G', self.register, 'eighth')
+        twentyFifthPattern.AddNote('A', self.register, 'dottedQuarter')
+        twentyFifthPattern.AddNote('A', self.register, 'dottedQuarter')
+        twentyFifthPattern.AddNote('A', self.register, 'dottedQuarter')
+        twentyFifthPattern.AddNote('A', self.register, 'dottedQuarter')
+        twentyFifthPattern.AddNote('A', self.register, 'dottedQuarter')
+        twentyFifthPattern.AddNote('B', self.register, 'dottedQuarter')
+        self.allPatterns.append(twentyFifthPattern)
         return
 
     def CreateTwentySixthPattern(self):
+        twentySixthPattern = Pattern(self.lengthOfSixteenthNote)
+        twentySixthPattern.AddNote('E', self.register, 'eighth')
+        twentySixthPattern.AddNote('F#', self.register, 'eighth')
+        twentySixthPattern.AddNote('G', self.register, 'eighth')
+        twentySixthPattern.AddNote('A', self.register, 'eighth')
+        twentySixthPattern.AddNote('B', self.register, 'dottedQuarter')
+        twentySixthPattern.AddNote('B', self.register, 'dottedQuarter')
+        twentySixthPattern.AddNote('B', self.register, 'dottedQuarter')
+        twentySixthPattern.AddNote('B', self.register, 'dottedQuarter')
+        twentySixthPattern.AddNote('B', self.register, 'dottedQuarter')
+        self.allPatterns.append(twentySixthPattern)
         return
 
     def CreateTwentySeventhPattern(self):
+        twentySeventhPattern = Pattern(self.lengthOfSixteenthNote)
+        twentySeventhPattern.AddNote('E', self.register, 'sixteenth')
+        twentySeventhPattern.AddNote('F#', self.register, 'sixteenth')
+        twentySeventhPattern.AddNote('E', self.register, 'sixteenth')
+        twentySeventhPattern.AddNote('F#', self.register, 'sixteenth')
+        twentySeventhPattern.AddNote('G', self.register, 'eighth')
+        twentySeventhPattern.AddNote('E', self.register, 'sixteenth')
+        twentySeventhPattern.AddNote('G', self.register, 'sixteenth')
+        twentySeventhPattern.AddNote('F#', self.register, 'sixteenth')
+        twentySeventhPattern.AddNote('E', self.register, 'sixteenth')
+        twentySeventhPattern.AddNote('F#', self.register, 'sixteenth')
+        twentySeventhPattern.AddNote('E#', self.register, 'sixteenth')
+        self.allPatterns.append(twentySeventhPattern)
         return
 
     def CreateTwentyEighthPattern(self):
+        twentyEighthPattern = Pattern(self.lengthOfSixteenthNote)
+        twentyEighthPattern.AddNote('E', self.register, 'sixteenth')
+        twentyEighthPattern.AddNote('F#', self.register, 'sixteenth')
+        twentyEighthPattern.AddNote('E', self.register, 'sixteenth')
+        twentyEighthPattern.AddNote('F#', self.register, 'sixteenth')
+        twentyEighthPattern.AddNote('E', self.register, 'dottedEighth')
+        twentyEighthPattern.AddNote('E', self.register, 'sixteenth')
+        self.allPatterns.append(twentyEighthPattern)
         return
 
     def CreateTwentyNinthPattern(self):
+        twentyNinthPattern = Pattern(self.lengthOfSixteenthNote)
+        twentyNinthPattern.AddNote('E', self.register, 'dottedHalf')
+        twentyNinthPattern.AddNote('G', self.register, 'dottedHalf')
+        twentyNinthPattern.AddNote('C', self.register + 1, 'dottedHalf')
+        self.allPatterns.append(twentyNinthPattern)
         return
 
     def CreateThirtiethPattern(self):
+        thirtiethPattern = Pattern(self.lengthOfSixteenthNote)
+        thirtiethPattern.AddNote('C', self.register + 1, 'dottedWhole')
+        self.allPatterns.append(thirtiethPattern)
         return
 
     def CreateThirtyFirstPattern(self):
