@@ -2,22 +2,13 @@ import pretty_midi
 from Pattern import Pattern
 
 class Voice:
-    def __init__(self, ap, numberOfOctavesToTransposePatternsBy):
+    def __init__(self, ap):
         self.patterns = []
         self.allPatterns = ap
-        self.TransposePatterns(self.allPatterns, numberOfOctavesToTransposePatternsBy)
         self.currentPattern = 0
         self.place = 0
         self.IsOnLastPattern = False
         self.timeOnCurrentPattern = 0
-        self.register = numberOfOctavesToTransposePatternsBy
-        return
-
-    def TransposePatterns(self, ap, o):
-        for i in range(0, len(ap)):
-            currentPatternToTranspose = ap[i].GetPattern()
-            for j in range(0, len(currentPatternToTranspose)):
-                currentPatternToTranspose[j].Transpose(o)
         return
 
     def GetAllPatterns(self):
@@ -35,11 +26,6 @@ class Voice:
         self.timeOnCurrentPattern = 0
         return
 
-    #for TESTING ONLY
-    def ReversePattern(self):
-        self.currentPattern = self.currentPattern - 1
-        return
-
     def IsNotOnLastPattern(self):
         return not self.IsOnLastPattern
 
@@ -52,6 +38,6 @@ class Voice:
     def GetMIDIData(self):
         instrument = pretty_midi.Instrument(program=pretty_midi.instrument_name_to_program('Cello'))
         for i in range(0, len(self.patterns)):
-            self.patterns[i].GetMIDIData(instrument, self.place, self.register)
+            self.patterns[i].GetMIDIData(instrument, self.place)
             self.place = self.place + self.patterns[i].GetLength()
         return instrument

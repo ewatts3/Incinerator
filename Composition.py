@@ -7,15 +7,14 @@ import random
 class Composition:
     def __init__(self, numberOfVoices, tempo):
         self.lengthOfSixteenthNote = self.FindLengthOfSixteenthNote(tempo)
-
-        ap = Patterns(self.lengthOfSixteenthNote)
-        self.allPatterns = ap.GetAllPatterns()
-
-        register = 1
+        register = 6
         self.voices = []
         for i in range(0, numberOfVoices):
-            self.voices.append(Voice(self.allPatterns, register))
-            register = register - 1
+            patterns = Patterns(self.lengthOfSixteenthNote, register)
+            allPatterns = patterns.GetAllPatterns()
+            self.voices.append(Voice(allPatterns))
+            if(i % 2 == 0):
+                register = register - 1
 
         self.CreateComposition()
         #self.CheckPatterns()
@@ -26,15 +25,6 @@ class Composition:
         quarterNoteLength = (60 / tempo)
         sixteenthNoteLength = (quarterNoteLength / 4)
         return sixteenthNoteLength
-
-    #def CopyAllPatterns(self, ap):
-    #    copy = []
-    #    for i in range(0, len(ap)):
-    #        patternToCopy = ap[i].GetPattern()
-    #        copyPattern = Pattern(self.lengthOfSixteenthNote)
-    #        for j in range(0, len(ap[i])):
-
-    #    return copy
 
     def CreateComposition(self):
         allVoicesDone = False
@@ -89,12 +79,9 @@ class Composition:
     def CheckPatterns(self):
         for i in range(0, len(self.voices[0].GetAllPatterns())):
             self.voices[0].AddPattern()
-            self.voices[0].ChangePattern()
-
-        self.voices[0].ReversePattern()
-
-        for j in range(0, 3):
             self.voices[0].AddPattern()
+            self.voices[0].AddPattern()
+            self.voices[0].ChangePattern()
         return
 
     def WriteFile(self):
@@ -107,4 +94,4 @@ class Composition:
             instrument = instrument + 1
         return
 
-Composition(1, 120) #tempo in quarter bpms
+Composition(8, 120) #tempo in quarter bpms

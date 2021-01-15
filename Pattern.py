@@ -56,9 +56,9 @@ class Pattern:
     def GetLength(self):
         return self.place
 
-    def GetMIDIData(self, instrument, place, register):
+    def GetMIDIData(self, instrument, place):
         for i in range(0, len(self.pattern)):
-            instrument.notes.append(self.pattern[i].GetMIDIData(place, register))
+            instrument.notes.append(self.pattern[i].GetMIDIData(place))
         return
 
 
