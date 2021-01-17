@@ -22,10 +22,14 @@ class Pattern:
             end = self.place + (self.lengthOfSixteenthNote * 6)
         elif rhythmicValue == 'half':
             end = self.place + (self.lengthOfSixteenthNote * 8)
+        elif rhythmicValue == 'halfTiedToEighth':
+            end = self.place + (self.lengthOfSixteenthNote * 10)
         elif rhythmicValue == 'dottedHalf':
             end = self.place + (self.lengthOfSixteenthNote * 12)
         elif rhythmicValue == 'dottedHalfTiedToSixteenth':
             end = self.place + (self.lengthOfSixteenthNote * 13)
+        elif rhythmicValue == 'dottedHalfTiedToEighth':
+            end = self.place + (self.lengthOfSixteenthNote * 14)
         elif rhythmicValue == 'whole':
             end = self.place + (self.lengthOfSixteenthNote * 16)
         elif rhythmicValue == 'wholeTiedToQuarter':
