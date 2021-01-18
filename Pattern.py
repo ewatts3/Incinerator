@@ -10,7 +10,12 @@ class Pattern:
         return
 
     def AddNote(self, letter, octave, rhythmicValue):
-        if rhythmicValue == 'sixteenth':
+        if rhythmicValue == 'graceNote':
+            lengthOfGraceNote = self.place - (self.lengthOfSixteenthNote * .5)
+            self.pattern.append(Note(letter, octave, lengthOfGraceNote, self.place))
+            # so self.place = self.place
+            return
+        elif rhythmicValue == 'sixteenth':
             end = self.place + self.lengthOfSixteenthNote
         elif rhythmicValue == 'eighth':
             end = self.place + (self.lengthOfSixteenthNote * 2)
@@ -41,6 +46,7 @@ class Pattern:
    
         self.pattern.append(Note(letter, octave, self.place, end))
         self.place = end
+        self.length = self.place
         return
 
     def AddRest(self, rhythmicValue):
@@ -58,7 +64,7 @@ class Pattern:
         return self.pattern
 
     def GetLength(self):
-        return self.place
+        return self.length
 
     def GetMIDIData(self, instrument, place):
         for i in range(0, len(self.pattern)):

@@ -7,6 +7,7 @@ class Patterns:
         self.register = register
         self.allPatterns = []
 
+        self.CreateZerothPattern()
         self.CreateFirstPattern()
         self.CreateSecondPattern()
         self.CreateThirdPattern()
@@ -65,10 +66,36 @@ class Patterns:
     def GetAllPatterns(self):
         return self.allPatterns
 
+    def CreateZerothPattern(self): # a copy of the first pattern, put with an added eighth note rest to accomodate the first grace note
+        zerothPattern = Pattern(self.lengthOfSixteenthNote)
+        zerothPattern.AddRest('quarter')
+        zerothPattern.AddNote('C', self.register, 'graceNote')
+        zerothPattern.AddNote('E', self.register, 'quarter')
+        zerothPattern.AddNote('C', self.register, 'graceNote')
+        zerothPattern.AddNote('E', self.register, 'quarter')
+        zerothPattern.AddNote('C', self.register, 'graceNote')
+        zerothPattern.AddNote('E', self.register, 'quarter')
+        self.allPatterns.append(zerothPattern)
+        return
+
     def CreateFirstPattern(self):
+        firstPattern = Pattern(self.lengthOfSixteenthNote)
+        firstPattern.AddNote('C', self.register, 'graceNote')
+        firstPattern.AddNote('E', self.register, 'quarter')
+        firstPattern.AddNote('C', self.register, 'graceNote')
+        firstPattern.AddNote('E', self.register, 'quarter')
+        firstPattern.AddNote('C', self.register, 'graceNote')
+        firstPattern.AddNote('E', self.register, 'quarter')
+        self.allPatterns.append(firstPattern)
         return
 
     def CreateSecondPattern(self):
+        secondPattern = Pattern(self.lengthOfSixteenthNote)
+        secondPattern.AddNote('C', self.register, 'graceNote')
+        secondPattern.AddNote('E', self.register, 'eighth')
+        secondPattern.AddNote('F', self.register, 'eighth')
+        secondPattern.AddNote('E', self.register, 'quarter')
+        self.allPatterns.append(secondPattern)
         return
 
     def CreateThirdPattern(self):
@@ -492,37 +519,119 @@ class Patterns:
         return
 
     def CreateFortySecondthPattern(self):
+        fortySecondthPattern = Pattern(self.lengthOfSixteenthNote)
+        fortySecondthPattern.AddNote('C', self.register + 1, 'whole')
+        fortySecondthPattern.AddNote('B', self.register, 'whole')
+        fortySecondthPattern.AddNote('A', self.register, 'whole')
+        fortySecondthPattern.AddNote('C', self.register + 1, 'whole')
+        self.allPatterns.append(fortySecondthPattern)
         return
 
     def CreateFortyThirdPattern(self):
+        fortyThirdPattern = Pattern(self.lengthOfSixteenthNote)
+        fortyThirdPattern.AddNote('F', self.register + 1, 'sixteenth')
+        fortyThirdPattern.AddNote('E', self.register + 1, 'sixteenth')
+        fortyThirdPattern.AddNote('F', self.register + 1, 'sixteenth')
+        fortyThirdPattern.AddNote('E', self.register + 1, 'sixteenth')
+        fortyThirdPattern.AddNote('E', self.register + 1, 'eighth')
+        fortyThirdPattern.AddNote('E', self.register + 1, 'eighth')
+        fortyThirdPattern.AddNote('E', self.register + 1, 'eighth')
+        fortyThirdPattern.AddNote('F', self.register + 1, 'sixteenth')
+        fortyThirdPattern.AddNote('E', self.register + 1, 'sixteenth')
+        self.allPatterns.append(fortyThirdPattern)
         return
 
     def CreateFortyFourthPattern(self):
+        fortyFourthPattern = Pattern(self.lengthOfSixteenthNote)
+        fortyFourthPattern.AddNote('F', self.register + 1, 'eighth')
+        fortyFourthPattern.AddNote('E', self.register + 1, 'quarter')
+        fortyFourthPattern.AddNote('E', self.register + 1, 'eighth')
+        fortyFourthPattern.AddNote('C', self.register + 1, 'quarter')
+        self.allPatterns.append(fortyFourthPattern)
         return
 
     def CreateFortyFifthPattern(self):
+        fortyFifthPattern = Pattern(self.lengthOfSixteenthNote)
+        fortyFifthPattern.AddNote('D', self.register + 1, 'quarter')
+        fortyFifthPattern.AddNote('D', self.register + 1, 'quarter')
+        fortyFifthPattern.AddNote('G', self.register, 'quarter')
+        self.allPatterns.append(fortyFifthPattern)
         return
 
     def CreateFortySixthPattern(self):
+        fortySixthPattern = Pattern(self.lengthOfSixteenthNote)
+        fortySixthPattern.AddNote('G', self.register, 'sixteenth')
+        fortySixthPattern.AddNote('D', self.register + 1, 'sixteenth')
+        fortySixthPattern.AddNote('E', self.register + 1, 'sixteenth')
+        fortySixthPattern.AddNote('D', self.register + 1, 'sixteenth')
+        fortySixthPattern.AddRest('eighth')
+        fortySixthPattern.AddNote('G', self.register, 'eighth')
+        fortySixthPattern.AddRest('eighth')
+        fortySixthPattern.AddNote('G', self.register, 'eighth')
+        fortySixthPattern.AddRest('eighth')
+        fortySixthPattern.AddNote('G', self.register, 'eighth')
+        fortySixthPattern.AddNote('G', self.register, 'sixteenth')
+        fortySixthPattern.AddNote('D', self.register + 1, 'sixteenth')
+        fortySixthPattern.AddNote('E', self.register + 1, 'sixteenth')
+        fortySixthPattern.AddNote('D', self.register + 1, 'sixteenth')
+        self.allPatterns.append(fortySixthPattern)
         return
 
     def CreateFortySeventhPattern(self):
+        fortySeventhPattern = Pattern(self.lengthOfSixteenthNote)
+        fortySeventhPattern.AddNote('D', self.register + 1, 'sixteenth')
+        fortySeventhPattern.AddNote('E', self.register + 1, 'sixteenth')
+        fortySeventhPattern.AddNote('D', self.register + 1, 'eighth')
+        self.allPatterns.append(fortySeventhPattern)
         return
 
     def CreateFortyEighthPattern(self):
+        fortyEighthPattern = Pattern(self.lengthOfSixteenthNote)
+        fortyEighthPattern.AddNote('G', self.register, 'dottedWhole')
+        fortyEighthPattern.AddNote('G', self.register, 'whole')
+        fortyEighthPattern.AddNote('F', self.register, 'wholeTiedToQuarter')
+        self.allPatterns.append(fortyEighthPattern)
         return
 
     def CreateFortyNinthPattern(self):
+        fortyNinthPattern = Pattern(self.lengthOfSixteenthNote)
+        fortyNinthPattern.AddNote('F', self.register, 'sixteenth')
+        fortyNinthPattern.AddNote('G', self.register, 'sixteenth')
+        fortyNinthPattern.AddNote('Bb', self.register, 'sixteenth')
+        fortyNinthPattern.AddNote('G', self.register, 'sixteenth')
+        fortyNinthPattern.AddNote('Bb', self.register, 'sixteenth')
+        fortyNinthPattern.AddNote('G', self.register, 'sixteenth')
+        self.allPatterns.append(fortyNinthPattern)
         return
 
     def CreateFiftiethPattern(self):
+        fiftiethPattern = Pattern(self.lengthOfSixteenthNote)
+        fiftiethPattern.AddNote('F', self.register, 'sixteenth')
+        fiftiethPattern.AddNote('G', self.register, 'sixteenth')
+        self.allPatterns.append(fiftiethPattern)
         return
 
-    def CreateFiftyFirstPattern(self):
+    def CreateFiftyFirstPattern(self): #slightly a lie - I repeated the measure to avoid an infinite loop when finding the eighth note beat
+        fiftyFirstPattern = Pattern(self.lengthOfSixteenthNote)
+        fiftyFirstPattern.AddNote('F', self.register, 'sixteenth')
+        fiftyFirstPattern.AddNote('G', self.register, 'sixteenth')
+        fiftyFirstPattern.AddNote('Bb', self.register, 'sixteenth')
+        fiftyFirstPattern.AddNote('F', self.register, 'sixteenth')
+        fiftyFirstPattern.AddNote('G', self.register, 'sixteenth')
+        fiftyFirstPattern.AddNote('Bb', self.register, 'sixteenth')
+        self.allPatterns.append(fiftyFirstPattern)
         return
 
     def CreateFiftySecondthPattern(self):
+        fiftySecondthPattern = Pattern(self.lengthOfSixteenthNote)
+        fiftySecondthPattern.AddNote('G', self.register, 'sixteenth')
+        fiftySecondthPattern.AddNote('Bb', self.register, 'sixteenth')
+        self.allPatterns.append(fiftySecondthPattern)
         return
 
     def CreateFiftyThirdPattern(self):
+        fiftyThirdPattern = Pattern(self.lengthOfSixteenthNote)
+        fiftyThirdPattern.AddNote('Bb', self.register, 'sixteenth')
+        fiftyThirdPattern.AddNote('G', self.register, 'sixteenth')
+        self.allPatterns.append(fiftyThirdPattern)
         return

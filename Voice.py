@@ -9,7 +9,7 @@ class Voice:
         self.place = 0
         self.IsOnLastPattern = False
         self.timeOnCurrentPattern = 0
-        self.wasChanged = False #we don't want to skip patterns, so this ensures that a voice only gets changed once per each iteration
+        self.wasChangedThisIteration = False #we don't want to skip patterns, so this ensures that a voice only gets changed once per each iteration
         self.isNotOnAnEightNoteBeat = False
         return
 
@@ -18,17 +18,18 @@ class Voice:
 
     def AddPattern(self):
         self.patterns.append(self.allPatterns[self.currentPattern])
+        self.place = self.place + self.allPatterns[self.currentPattern].GetLength()
         self.timeOnCurrentPattern = self.timeOnCurrentPattern + self.allPatterns[self.currentPattern].GetLength()
-        self.wasChanged = False
+        self.wasChangedThisIteration = False
         return
 
     def ChangePattern(self):
         if self.currentPattern == len(self.allPatterns) - 1:
             self.IsOnLastPattern = True
-        if (self.wasChanged is False) and (self.IsOnLastPattern is False):
+        if (self.wasChangedThisIteration is False) and (self.IsOnLastPattern is False):
             self.currentPattern = self.currentPattern + 1
             self.timeOnCurrentPattern = 0
-            self.wasChanged = True
+            self.wasChangedThisIteration = True
         return
 
     def GetCurrentPattern(self):
@@ -41,15 +42,18 @@ class Voice:
         return self.place
 
     def IsNotOnAnEighthNoteBeat(self, lengthOfSixteenthNote):
-        if((self.place % (lengthOfSixteenthNote * 2)) != 0): 
-            return True
-        else:
-            return False
+        if(self.place > 0):
+            if((self.place % (lengthOfSixteenthNote * 2)) != 0): 
+                return True
+            else:
+                return False
+        return False
 
     def GetTimeOnCurrentPattern(self):
         return self.timeOnCurrentPattern
 
     def GetMIDIData(self):
+        self.place = 0
         instrument = pretty_midi.Instrument(program=pretty_midi.instrument_name_to_program('Cello'))
         for i in range(0, len(self.patterns)):
             self.patterns[i].GetMIDIData(instrument, self.place)
