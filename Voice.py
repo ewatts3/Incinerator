@@ -7,7 +7,6 @@ class Voice:
         self.allPatterns = ap
         self.currentPattern = 0
         self.place = 0
-        self.IsOnLastPattern = False
         self.timeOnCurrentPattern = 0
         self.wasChangedThisIteration = False #we don't want to skip patterns, so this ensures that a voice only gets changed once per each iteration
         self.isNotOnAnEightNoteBeat = False
@@ -21,12 +20,14 @@ class Voice:
         return
 
     def ChangePattern(self):
-        if self.currentPattern == len(self.allPatterns) - 1:
-            self.IsOnLastPattern = True
-        if (self.wasChangedThisIteration is False) and (self.IsOnLastPattern is False):
+        if (self.wasChangedThisIteration is False) and (self.IsNotOnLastPattern()):
             self.currentPattern = self.currentPattern + 1
             self.timeOnCurrentPattern = 0
             self.wasChangedThisIteration = True
+        return
+
+    def ChangePatternForEnding(self):
+        self.currentPattern = self.currentPattern + 1
         return
 
     def GetAllPatterns(self):
@@ -36,7 +37,7 @@ class Voice:
         return self.currentPattern
 
     def IsNotOnLastPattern(self):
-        return not self.IsOnLastPattern
+        return (self.currentPattern != len(self.allPatterns) - 2)
 
     def GetPlace(self):
         return self.place

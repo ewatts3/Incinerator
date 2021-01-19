@@ -104,11 +104,20 @@ class Composition:
     def MakeEnding(self):
         for i in range(0, 9):
             self.AddMeasure('Automatic unison ending measure')
-        while(self.voices): #true while not empty
+
+        someAreStillPlaying = True
+        while(someAreStillPlaying is True): #true while not empty
             self.AddMeasure('Unison ending measure')
             self.GetPlace()
-            if(random.randint(0, 10) == 0):
-                self.voices.remove(self.voices[random.randint(0, len(self.voices) - 1)])
+
+            unfinishedVoices = []
+            someAreStillPlaying = False
+            for j in range(0, len(self.voices)):
+                if(self.voices[j].GetCurrentPattern() < 54):
+                    unfinishedVoices.append(j)
+                    someAreStillPlaying = True
+            if(someAreStillPlaying is True) and (random.randint(0, 9) == 0): #randomly pick when and which one to get rid of
+                self.voices[unfinishedVoices[random.randint(0, len(unfinishedVoices) - 1)]].ChangePatternForEnding()
         return
 
 ###############################################################################################################################################################

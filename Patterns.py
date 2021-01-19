@@ -7,7 +7,7 @@ class Patterns:
         self.register = register
         self.allPatterns = []
 
-        self.CreateZerothPattern()
+        self.CreateBeginningPattern()
         self.CreateFirstPattern()
         self.CreateSecondPattern()
         self.CreateThirdPattern()
@@ -61,12 +61,13 @@ class Patterns:
         self.CreateFiftyFirstPattern()
         self.CreateFiftySecondthPattern()
         self.CreateFiftyThirdPattern()
+        self.CreateEndingPattern()
         return
 
     def GetAllPatterns(self):
         return self.allPatterns
 
-    def CreateZerothPattern(self):
+    def CreateBeginningPattern(self):
         zerothPattern = Pattern(self.lengthOfSixteenthNote)
         zerothPattern.AddRest('emptyMeasure')
         self.allPatterns.append(zerothPattern)
@@ -629,6 +630,11 @@ class Patterns:
         fiftyThirdPattern.AddNote('G', self.register, 'sixteenth')
         self.allPatterns.append(fiftyThirdPattern)
         return
+
+    def CreateEndingPattern(self):
+        endingPattern = Pattern(self.lengthOfSixteenthNote)
+        endingPattern.AddRest('emptyMeasure')
+        self.allPatterns.append(endingPattern)
 
     def CreatePianoAccompaniment(self, length):
         pianoAccompaniment = Pattern(self.lengthOfSixteenthNote)
