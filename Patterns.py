@@ -66,15 +66,9 @@ class Patterns:
     def GetAllPatterns(self):
         return self.allPatterns
 
-    def CreateZerothPattern(self): # a copy of the first pattern, put with an added eighth note rest to accomodate the first grace note
+    def CreateZerothPattern(self):
         zerothPattern = Pattern(self.lengthOfSixteenthNote)
-        zerothPattern.AddRest('quarter')
-        zerothPattern.AddNote('C', self.register, 'graceNote')
-        zerothPattern.AddNote('E', self.register, 'quarter')
-        zerothPattern.AddNote('C', self.register, 'graceNote')
-        zerothPattern.AddNote('E', self.register, 'quarter')
-        zerothPattern.AddNote('C', self.register, 'graceNote')
-        zerothPattern.AddNote('E', self.register, 'quarter')
+        zerothPattern.AddRest('emptyMeasure')
         self.allPatterns.append(zerothPattern)
         return
 
@@ -634,4 +628,10 @@ class Patterns:
         fiftyThirdPattern.AddNote('Bb', self.register, 'sixteenth')
         fiftyThirdPattern.AddNote('G', self.register, 'sixteenth')
         self.allPatterns.append(fiftyThirdPattern)
+        return
+
+    def CreatePianoAccompaniment(self, length):
+        pianoAccompaniment = Pattern(self.lengthOfSixteenthNote)
+        pianoAccompaniment.AddNote('C', self.register + 2, 'eighth')
+        #finish
         return

@@ -50,7 +50,11 @@ class Pattern:
         return
 
     def AddRest(self, rhythmicValue):
-        if rhythmicValue == 'sixteenth':
+        if rhythmicValue == 'emptyMeasure':
+            self.place = self.place + (self.lengthOfSixteenthNote * 4)
+            self.length = self.place
+            #self.pattern.append(Note('C', 4, 0, 0))
+        elif rhythmicValue == 'sixteenth':
             self.place = self.place + self.lengthOfSixteenthNote
         elif rhythmicValue == 'eighth':
             self.place = self.place + (self.lengthOfSixteenthNote * 2)
@@ -70,5 +74,3 @@ class Pattern:
         for i in range(0, len(self.pattern)):
             instrument.notes.append(self.pattern[i].GetMIDIData(place))
         return
-
-

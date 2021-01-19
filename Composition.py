@@ -5,6 +5,8 @@ import os
 import random
 
 class Composition:
+###############################################################################################################################################################
+#init methods
     def __init__(self, numberOfVoices, tempo):
         self.lengthOfSixteenthNote = self.FindLengthOfSixteenthNote(tempo)
         self.voices = self.MakeVoices(numberOfVoices)
@@ -12,6 +14,7 @@ class Composition:
         self.CreateTxtFile() #for manually analyzing data
         #self.CheckPatterns()
         self.CreateComposition()
+        #self.CreateAccompaniment()
         self.WriteMIDIFiles()
         return
 
@@ -36,113 +39,38 @@ class Composition:
         sixteenthNoteLength = (quarterNoteLength / 4)
         return sixteenthNoteLength
 
-#####################################################################################################
+###############################################################################################################################################################
 
     def CreateComposition(self):
         allVoicesDone = False
-        place = 0
+        self.place = 0
 
-        self.Initialize()
+        self.MakeIntro()
 
-        while self.CheckIfAllVoicesAreDone() is False:
-            #we only want to add something when it's on a proper eighth note beat to avoid innappropriate polyrhythms
-            #self.CatchUpOffBeatVoices()
+        while self.CheckIfAllVoicesAreDone() is False:   
+            self.CatchUpOffBeatVoices() #we only want to add something when it's on a proper eighth note beat to avoid innappropriate polyrhythms
             
             self.GetCurrentState()
 
-            #ensure that all voices are within 2 patterns of each other
-            self.CatchUpLaggingVoices()
+            self.CatchUpLaggingVoices() #ensure that all voices are within 2 patterns of each other
 
-            #decide when to change - more likely has time goes on
-            self.DecideIfVoicesShouldChange()
+            self.DecideIfVoicesShouldChange() #decide when to change - more likely has time goes on
 
-            #ensure voices don't go on for too long
-            self.ChangeVoicesIfTheyAreGoingOnForTooLong()
+            self.ChangeVoicesIfTheyAreGoingOnForTooLong() #ensure voices don't go on for too long
 
-            #we want to stay in an "interesting" state for a longer amount of time than a "not interesting" state
-            #here I am defining an "interesting" state as one where there is great diversity amoung the patterns being played
-            #ie, max(self.currentState), max(self.currentState) - 1, max(self.currentState) - 2, are each approximately a third
-            #This function finds that, and then stays both in "intersting" states and "not interesting" states for a time 
-            #proporitonal to the number of voices (that is, more voices means a longer time for both)
-            self.DecideHowLongToStayInThisState()
+            self.DecideHowLongToStayInThisState() #we want to stay in an "interesting" state for a longer amount of time than a "not interesting" state (see below for more info)
+
+            self.GetPlace()
+
+        self.MakeEnding()
         return
 
-    def Initialize(self):
-        self.AddMeasure('Going to first pattern')
-        for i in range(0, len(self.voices)): # will remove this later when logic for voices entering is created
-            self.voices[i].ChangePattern()
-        return
-
+###############################################################################################################################################################
+#Utility methods
     def CatchUpOffBeatVoices(self):
         for i in range(0, len(self.voices)):
                 while(self.voices[i].IsNotOnAnEighthNoteBeat(self.lengthOfSixteenthNote)):
                     self.voices[i].AddPattern()   
-        return
-
-    def CatchUpLaggingVoices(self):
-        mostAhead = max(self.currentState)
-        laggingVoices = []
-
-        for i in range(0, len(self.voices)):
-            if self.voices[i].GetCurrentPattern() < (mostAhead - 2):
-                laggingVoices.append(self.voices[i])
-
-        numberOfLaggingVoices = len(laggingVoices)
-
-        for j in range(0, numberOfLaggingVoices):
-            voiceToCatchUp = random.randint(0, len(laggingVoices) - 1)
-            laggingVoices[voiceToCatchUp].ChangePattern()
-            laggingVoices.remove(laggingVoices[voiceToCatchUp])
-            for k in range(0, random.randint(0, 2)): #we want to make the catch up as smooth as possible. so vary the lengths of times patterns change to catch up
-                self.AddMeasure('smoothening transition for voices catching up...')
-
-        if (numberOfLaggingVoices > 0):
-            self.WriteTxtFile('Finished catching up\n')
-        return
-
-    def DecideIfVoicesShouldChange(self):
-        for i in range(0, len(self.voices)):
-                if random.randint(0, 180) < self.voices[i].GetTimeOnCurrentPattern(): #180 - 90 (max length) * 2 / 25% chance at 45 seconds (optimal minimum length)
-                    self.voices[i].ChangePattern()
-        return
-
-    def ChangeVoicesIfTheyAreGoingOnForTooLong(self):
-        voicesGoingOnForTooLong = []
-
-        #for k in range(0, len(self.voices) - 1): #stops adding if it's totally done / make less regular
-        #    print(str(len(self.voices)) + '|' + k)
-        #    if self.voices[k].IsNotOnLastPattern() is False and self.voices[k].GetTimeOnCurrentPattern() >= 90:
-        #        self.voices.remove(self.voices[k])
-
-        for i in range(0, len(self.voices)):
-                if(self.voices[i].GetTimeOnCurrentPattern() >= 90):
-                    voicesGoingOnForTooLong.append(self.voices[i])
-
-        numberOfVoicesGoingOnForTooLong = len(voicesGoingOnForTooLong)
-
-        for j in range(0, numberOfVoicesGoingOnForTooLong):
-            voiceToChange = random.randint(0, len(voicesGoingOnForTooLong) - 1)
-            voicesGoingOnForTooLong[voiceToChange].ChangePattern()
-            voicesGoingOnForTooLong.remove(voicesGoingOnForTooLong[voiceToChange])
-            for k in range(0, random.randint(0, 2)):
-                self.AddMeasure('smoothening transition for voices going on for too long...')
-
-        if (numberOfVoicesGoingOnForTooLong > 0):
-            self.WriteTxtFile('Finished transitioning\n')
-        return
-
-    def DecideHowLongToStayInThisState(self):
-        self.AddMeasure('Automatic addition')
-
-        somethingWasAdded = False
-        for i in range(1, len(self.voices)):
-            if self.voices[i].GetCurrentPattern() != self.voices[i-1].GetCurrentPattern():
-                somethingWasAdded = True
-                self.AddMeasure('Adding based on interest level...')
-        if(somethingWasAdded is False):
-            self.WriteTxtFile('Nothing was added based on interest level\n')
-        else:
-            self.WriteTxtFile('Finished adding based on interest level\n')
         return
 
     def GetCurrentState(self):
@@ -151,23 +79,11 @@ class Composition:
             self.currentState.append(self.voices[i].GetCurrentPattern())
         return
 
-    def AddMeasure(self, stringForOutputFile):
+    def GetPlace(self):
         allPlaces = []
-        for k in range(0, len(self.voices)):
-            allPlaces.append(self.voices[k].GetPlace())
-        averagePlace = (sum(allPlaces)/len(allPlaces))
-
-        voicesToProgress = [] #don't want any voice to get too far ahead in terms of time
-        for j in range(0, len(self.voices)):
-            if (self.voices[j].GetPlace() < averagePlace + 3): #won't be added if too long
-                voicesToProgress.append(self.voices[j])
-
-        for i in range(0, len(voicesToProgress)):
-            voicesToProgress[i].AddPattern()
-
-        self.GetCurrentState()
-        self.WriteTxtFile(str(self.currentState) + ' ')
-        self.WriteTxtFile(stringForOutputFile + '\n')
+        for i in range(0, len(self.voices)):
+            allPlaces.append(self.voices[i].GetPlace())
+        self.place = max(allPlaces)
         return
 
     def CheckIfAllVoicesAreDone(self):
@@ -178,17 +94,149 @@ class Composition:
                 i = len(self.voices)
         return allVoicesDone
 
-#####################################################################################################
+###############################################################################################################################################################
+#edge cases
+    def MakeIntro(self):
+        for i in range(0, 10):
+            self.AddMeasure('Empty measure for intro')
+        return
 
-    #for TESTING ONLY
-    def CheckPatterns(self):
+    def MakeEnding(self):
+        for i in range(0, 9):
+            self.AddMeasure('Automatic unison ending measure')
+        while(self.voices): #true while not empty
+            self.AddMeasure('Unison ending measure')
+            self.GetPlace()
+            if(random.randint(0, 10) == 0):
+                self.voices.remove(self.voices[random.randint(0, len(self.voices) - 1)])
+        return
+
+###############################################################################################################################################################
+#methods for catching up / moving voices going on for too long, and transitioning them
+    def CatchUpLaggingVoices(self):
+        laggingVoices = self.GetLaggingVoices()
+        self.TransitionVoices(laggingVoices)
+        return
+
+    def GetLaggingVoices(self):
+        mostAhead = max(self.currentState)
+        laggingVoices = []
+        for i in range(0, len(self.voices)):
+            if self.voices[i].GetCurrentPattern() < (mostAhead - 2):
+                laggingVoices.append(self.voices[i])
+        return laggingVoices
+
+    def ChangeVoicesIfTheyAreGoingOnForTooLong(self):
+        voicesGoingOnForTooLong = self.GetVoicesThatAreGoingOnForTooLong()
+        self.TransitionVoices(voicesGoingOnForTooLong)
+        return
+
+    def GetVoicesThatAreGoingOnForTooLong(self):
+        voicesGoingOnForTooLong = []
+        for i in range(0, len(self.voices)):
+                if(self.voices[i].GetTimeOnCurrentPattern() >= 90):
+                    voicesGoingOnForTooLong.append(self.voices[i])
+        return voicesGoingOnForTooLong
+
+    def TransitionVoices(self, voicesToTransition):
+        numberOfVoicesToTransition = len(voicesToTransition)
+        for i in range(0, numberOfVoicesToTransition):
+            voiceToTransition = random.randint(0, len(voicesToTransition) - 1)
+            voicesToTransition[voiceToTransition].ChangePattern()
+            voicesToTransition.remove(voicesToTransition[voiceToTransition])
+            for j in range(0, random.randint(0, 2)): #we want to make the catch up as smooth as possible. so vary the lengths of times patterns change to catch up
+                self.AddMeasure('smoothening transition...')
+        return
+
+###############################################################################################################################################################
+#methods for deciding if voices should change
+    def DecideIfVoicesShouldChange(self):
+        self.BasedOnLength()
+        return
+
+    def BasedOnLength(self):
+        for i in range(0, len(self.voices)):
+            if random.randint(0, 180) < self.voices[i].GetTimeOnCurrentPattern(): #180 - 90 (max length) * 2 / 25% chance at 45 seconds (optimal minimum length)
+                self.voices[i].ChangePattern()
+        return
+
+###############################################################################################################################################################
+#methods for deciding how many times to repeat a pattern
+    def DecideHowLongToStayInThisState(self):
+        self.AddMeasure('Automatic addition')
+
+        somethingWasAdded = False
+        #here I am defining an "interesting" state as one where there is great diversity amoung the patterns being played
+        #ie, max(self.currentState), max(self.currentState) - 1, max(self.currentState) - 2, are each approximately a third
+        #This function finds that, and then stays both in "intersting" states and "not interesting" states for a time 
+        #proporitonal to the number of voices (that is, more voices means a longer time for both)
+        for i in range(1, len(self.voices)):
+            if self.voices[i].GetCurrentPattern() != self.voices[i-1].GetCurrentPattern():
+                somethingWasAdded = True
+                self.AddMeasure('Adding based on interest level...')
+        if(somethingWasAdded is False):
+            self.WriteTxtFile('Nothing was added based on interest level\n')
+        else:
+            self.WriteTxtFile('Finished adding based on interest level\n')
+        return
+
+###############################################################################################################################################################
+#methods for adding measures
+    def AddMeasure(self, stringForOutputFile):
+        voicesToAddMeasuresForBasedOnLength = self.GetVoicesToAddMeasuresForBasedOnTheirLength()
+
+        voicesToProgress = self.GetAllVoicesToProgress(voicesToAddMeasuresForBasedOnLength)
+
+        self.ProgressVoices(voicesToProgress)
+        self.UpdateTxtFile(stringForOutputFile)
+        return
+
+    def GetVoicesToAddMeasuresForBasedOnTheirLength(self):
+        allPlaces = []
+        for k in range(0, len(self.voices)):
+            allPlaces.append(self.voices[k].GetPlace())
+        averagePlace = (sum(allPlaces)/len(allPlaces))
+
+        voicesToProgress = [] #don't want any voice to get too far ahead in terms of time
+        for j in range(0, len(self.voices)):
+            if (self.voices[j].GetPlace() < averagePlace + 3): #won't be added if too long
+                voicesToProgress.append(self.voices[j])
+        return voicesToProgress
+
+    def GetAllVoicesToProgress(self, basedOnLength):
+        voicesToProgress = []
+        for i in range(0, len(basedOnLength)):
+            voicesToProgress.append(basedOnLength[i])
+        return voicesToProgress
+
+    def ProgressVoices(self, voices):
+        for i in range(0, len(voices)):
+            voices[i].AddPattern()
+        return
+
+    def UpdateTxtFile(self, string):
+        self.GetCurrentState()
+        self.WriteTxtFile(str(self.currentState) + ' ')
+        self.WriteTxtFile(string + '\n')
+        return
+
+###############################################################################################################################################################
+#accompaniment creation methods
+    def CreateAccompaniment(self):
+        #finish
+        return
+
+###############################################################################################################################################################
+#file writing methods
+    def CheckPatterns(self): #for TESTING ONLY
         for i in range(0, len(self.voices[0].GetAllPatterns())):
             self.voices[0].AddPattern()
             self.voices[0].ChangePattern()
         return
 
     def CreateTxtFile(self):
-        os.remove('allStates.txt')
+        if os.path.exists('allStates.txt'):
+            os.remove('allStates.txt')
         listOfAllStates = open('allStates.txt', 'x')
         listOfAllStates.close()
         return
@@ -209,4 +257,6 @@ class Composition:
             instrumentNumberForOutput = instrumentNumberForOutput + 1
         return
 
-Composition(7, 120) #tempo in quarter bpms
+###############################################################################################################################################################
+
+Composition(7, 120) #(number of voices, tempo in quarter bpms)

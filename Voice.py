@@ -13,9 +13,6 @@ class Voice:
         self.isNotOnAnEightNoteBeat = False
         return
 
-    def GetAllPatterns(self):
-        return self.allPatterns
-
     def AddPattern(self):
         self.patterns.append(self.allPatterns[self.currentPattern])
         self.place = self.place + self.allPatterns[self.currentPattern].GetLength()
@@ -32,6 +29,9 @@ class Voice:
             self.wasChangedThisIteration = True
         return
 
+    def GetAllPatterns(self):
+        return self.allPatterns
+
     def GetCurrentPattern(self):
         return self.currentPattern
 
@@ -41,6 +41,9 @@ class Voice:
     def GetPlace(self):
         return self.place
 
+    def GetTimeOnCurrentPattern(self):
+        return self.timeOnCurrentPattern
+
     def IsNotOnAnEighthNoteBeat(self, lengthOfSixteenthNote):
         if(self.place > 0):
             if((self.place % (lengthOfSixteenthNote * 2)) != 0): 
@@ -48,9 +51,6 @@ class Voice:
             else:
                 return False
         return False
-
-    def GetTimeOnCurrentPattern(self):
-        return self.timeOnCurrentPattern
 
     def GetMIDIData(self):
         self.place = 0
