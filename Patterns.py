@@ -462,7 +462,7 @@ class Patterns:
         self.allPatterns.append(thirtyFifthPattern)
         return
 
-    def CreateThirtySixthPattern(self):
+    def CreateThirtySixthPattern(self): #slightly a cheat - I repeated the measure to avoid an infinite loop when finding the eighth note beat
         thirtySixthPattern = Pattern(self.lengthOfSixteenthNote)
         thirtySixthPattern.AddNote('F', self.register, 'sixteenth')
         thirtySixthPattern.AddNote('G', self.register, 'sixteenth')
@@ -482,6 +482,9 @@ class Patterns:
 
     def CreateThirtyEighthPattern(self):
         thirtyEighthPattern = Pattern(self.lengthOfSixteenthNote)
+        thirtyEighthPattern.AddNote('F', self.register, 'sixteenth')
+        thirtyEighthPattern.AddNote('G', self.register, 'sixteenth')
+        thirtyEighthPattern.AddNote('B', self.register, 'sixteenth')
         thirtyEighthPattern.AddNote('F', self.register, 'sixteenth')
         thirtyEighthPattern.AddNote('G', self.register, 'sixteenth')
         thirtyEighthPattern.AddNote('B', self.register, 'sixteenth')
@@ -606,7 +609,7 @@ class Patterns:
         self.allPatterns.append(fiftiethPattern)
         return
 
-    def CreateFiftyFirstPattern(self): #slightly a lie - I repeated the measure to avoid an infinite loop when finding the eighth note beat
+    def CreateFiftyFirstPattern(self): #slightly a cheat - I repeated the measure to avoid an infinite loop when finding the eighth note beat
         fiftyFirstPattern = Pattern(self.lengthOfSixteenthNote)
         fiftyFirstPattern.AddNote('F', self.register, 'sixteenth')
         fiftyFirstPattern.AddNote('G', self.register, 'sixteenth')
@@ -635,9 +638,3 @@ class Patterns:
         endingPattern = Pattern(self.lengthOfSixteenthNote)
         endingPattern.AddRest('emptyMeasure')
         self.allPatterns.append(endingPattern)
-
-    def CreatePianoAccompaniment(self, length):
-        pianoAccompaniment = Pattern(self.lengthOfSixteenthNote)
-        pianoAccompaniment.AddNote('C', self.register + 2, 'eighth')
-        #finish
-        return

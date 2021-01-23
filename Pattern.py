@@ -62,6 +62,7 @@ class Pattern:
             self.place = self.place + (self.lengthOfSixteenthNote * 3)
         elif rhythmicValue == 'quarter':
             self.place = self.place + (self.lengthOfSixteenthNote * 4)
+        self.length = self.place
         return
 
     def GetPattern(self):

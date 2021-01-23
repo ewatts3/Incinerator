@@ -1,18 +1,18 @@
-Test with manymany voices
+Infinite loop issue?
 
 Composing:
 Refine decision making for:
 	When to end each voice
 	When a voice should change (add more factors)
 	How long a state should last (again more factors)
-Needs to last longer
+Needs to be shorter
+Check unison - sounds good / happens twice sometimes
 
 From TR himself:
 Have voices drop out
 Dynamics
 	Throughout
 	During ending
-Merge into unison 1-2 times during
 Transposing? Augementing rhythmic values?
 
 QOL:

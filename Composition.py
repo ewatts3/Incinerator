@@ -11,21 +11,32 @@ class Composition:
         self.lengthOfSixteenthNote = self.FindLengthOfSixteenthNote(tempo)
         self.voices = self.MakeVoices(numberOfVoices)
 
+        self.numberOfUnisons = 0
+        self.patternOfLastUnison = 0
+        self.numberOfPatternsSinceLastUnison = 0
+
         self.CreateTxtFile() #for manually analyzing data
-        #self.CheckPatterns()
+        #self.CheckPatterns() #TESTING ONLY
         self.CreateComposition()
-        #self.CreateAccompaniment()
+        #self.CreateAccompaniment() #todo
         self.WriteMIDIFiles()
         return
 
     def MakeVoices(self, numberOfVoices):
         voices = []
-        for i in range(numberOfVoices, 1, -1):
-            patterns = Patterns(self.lengthOfSixteenthNote, i)
-            allPatterns = patterns.GetAllPatterns()
-            voices.append(Voice(allPatterns))
+        #for i in range(numberOfVoices, 1, -1):
+        #   patterns = Patterns(self.lengthOfSixteenthNote, i)
+        #    allPatterns = patterns.GetAllPatterns()
+        #    voices.append(Voice(allPatterns))
 
-        #for j in range(7, 1, -1):
+        for i in range(0, numberOfVoices): #number of unique instruments really
+            for j in range(5, 2, -1):
+                register = j
+                patterns = Patterns(self.lengthOfSixteenthNote, register)
+                allPatterns = patterns.GetAllPatterns()
+                voices.append(Voice(allPatterns))
+
+        #for j in range(4, 2, -1):
         #    register = j
         #    for i in range(0, numberOfVoices):
         #        patterns = Patterns(self.lengthOfSixteenthNote, register)
@@ -47,10 +58,12 @@ class Composition:
 
         self.MakeIntro()
 
-        while self.CheckIfAllVoicesAreDone() is False:   
+        while self.CheckIfAllVoicesAreDone() is False: 
             self.CatchUpOffBeatVoices() #we only want to add something when it's on a proper eighth note beat to avoid innappropriate polyrhythms
             
             self.GetCurrentState()
+
+            self.UnisonCheck()
 
             self.CatchUpLaggingVoices() #ensure that all voices are within 2 patterns of each other
 
@@ -70,7 +83,8 @@ class Composition:
     def CatchUpOffBeatVoices(self):
         for i in range(0, len(self.voices)):
                 while(self.voices[i].IsNotOnAnEighthNoteBeat(self.lengthOfSixteenthNote)):
-                    self.voices[i].AddPattern()   
+                    self.voices[i].AddPattern()
+                    self.WriteTxtFile('Fixing off beat voice ' + str(i) + '\n')
         return
 
     def GetCurrentState(self):
@@ -116,8 +130,67 @@ class Composition:
                 if(self.voices[j].GetCurrentPattern() < 54):
                     unfinishedVoices.append(j)
                     someAreStillPlaying = True
-            if(someAreStillPlaying is True) and (random.randint(0, 9) == 0): #randomly pick when and which one to get rid of
+            if(someAreStillPlaying is True) and (random.randint(0, 2) == 0): #randomly pick when and which one to get rid of
                 self.voices[unfinishedVoices[random.randint(0, len(unfinishedVoices) - 1)]].ChangePatternForEnding()
+
+        self.WriteTxtFile(str(self.place / 60)) #length of whole piece
+        return
+
+###############################################################################################################################################################
+#methods for deciding if composition will become a unison
+    def UnisonCheck(self):
+        if(self.numberOfUnisons < 2):
+            if(min(self.currentState) > 10 and max(self.currentState) < 50):
+                if (self.numberOfUnisons == 1):
+                    self.numberOfPatternsSinceLastUnison = max(self.currentState) - self.patternOfLastUnison
+                else:
+                    self.numberOfPatternsSinceLastUnison = 5 #so next conditional evaluates to true
+                if(self.numberOfPatternsSinceLastUnison >= 5):
+                    becomeUnison = self.DecideIfCompositionShouldBecomeUnison()
+                    if(becomeUnison is True):
+                        self.BecomeUnison()
+        return
+
+    def DecideIfCompositionShouldBecomeUnison(self):
+        patternOne = max(self.currentState)
+        patternTwo = patternOne - 1
+        patternThree = patternOne - 2
+        numberOfPatternOne = 0
+        numberOfPatternTwo = 0
+        numberOfPatternThree = 0
+        for i in range(0, len(self.voices)):
+            if(self.voices[i].GetCurrentPattern() == patternOne):
+                numberOfPatternOne = numberOfPatternOne + 1
+            elif(self.voices[i].GetCurrentPattern() == patternTwo):
+                numberOfPatternTwo = numberOfPatternTwo + 1
+            else:
+                numberOfPatternThree = numberOfPatternThree + 1
+        averageOccurenceOfPatterns = numberOfPatternOne + numberOfPatternTwo + numberOfPatternThree / 3
+
+        if(averageOccurenceOfPatterns >= 33 and averageOccurenceOfPatterns <= 36):
+            return True
+        else:
+            return False
+
+    def BecomeUnison(self):
+        self.numberOfUnisons = self.numberOfUnisons + 1
+        self.numberOfPatternsSinceLastUnison = 0
+        self.patternOfLastUnison = max(self.currentState)
+        self.WriteTxtFile('Composition will become a unison...\n')
+
+        isAUnison = False
+        while(isAUnison is False):
+            isAUnison = True
+            for j in range(0, len(self.voices)):
+                if(self.voices[j].GetCurrentPattern() != max(self.currentState)):
+                    isAUnison = False
+                    if(random.randint(0, 2) == 0):
+                        self.voices[j].ChangePattern()
+                        for k in range(0, random.randint(0, 2)):
+                            self.AddMeasure('Transitioning towards unison...')
+        for l in range(0, random.randint(5, 12)):
+            self.AddMeasure('Sitting on unison...')
+        self.WriteTxtFile('Unison finished. Moving on...\n')
         return
 
 ###############################################################################################################################################################
@@ -153,7 +226,7 @@ class Composition:
             voiceToTransition = random.randint(0, len(voicesToTransition) - 1)
             voicesToTransition[voiceToTransition].ChangePattern()
             voicesToTransition.remove(voicesToTransition[voiceToTransition])
-            for j in range(0, random.randint(0, 2)): #we want to make the catch up as smooth as possible. so vary the lengths of times patterns change to catch up
+            for j in range(0, random.randint(0, 1)): #we want to make the catch up as smooth as possible. so vary the lengths of times patterns change to catch up
                 self.AddMeasure('smoothening transition...')
         return
 
@@ -161,24 +234,34 @@ class Composition:
 #methods for deciding if voices should change
     def DecideIfVoicesShouldChange(self):
         self.BasedOnLength()
+        self.BasedOnItsNeighborVoices() #may remove...too "calculated"
         return
 
     def BasedOnLength(self):
         for i in range(0, len(self.voices)):
-            if random.randint(0, 180) < self.voices[i].GetTimeOnCurrentPattern(): #180 - 90 (max length) * 2 / 25% chance at 45 seconds (optimal minimum length)
+            if random.randint(0, 180) < self.voices[i].GetTimeOnCurrentPattern(): #180 = (max length=90) * 2, means a 25% chance at 45 seconds (optimal minimum length)
                 self.voices[i].ChangePattern()
+        return
+
+    def BasedOnItsNeighborVoices(self):
+        if self.voices[len(self.voices) - 1].GetCurrentPattern() == self.voices[0].GetCurrentPattern() and self.voices[1].GetCurrentPattern() == self.voices[0].GetCurrentPattern():
+            if(random.randint(0, 10) == 0):
+                self.voices[0].ChangePattern() #first voice
+        for i in range(1, len(self.voices) - 1):
+            if self.voices[i - 1].GetCurrentPattern() == self.voices[i].GetCurrentPattern() and self.voices[i + 1].GetCurrentPattern() == self.voices[i].GetCurrentPattern():
+                if(random.randint(0, 10) == 0):
+                    self.voices[i].ChangePattern()
+        if self.voices[len(self.voices) - 2].GetCurrentPattern() == self.voices[len(self.voices) - 1].GetCurrentPattern() and self.voices[0].GetCurrentPattern() == self.voices[len(self.voices) - 1].GetCurrentPattern():
+            if(random.randint(0, 10) == 0):
+                self.voices[len(self.voices) - 1].ChangePattern() #last voice
         return
 
 ###############################################################################################################################################################
 #methods for deciding how many times to repeat a pattern
     def DecideHowLongToStayInThisState(self):
-        self.AddMeasure('Automatic addition')
+        #self.AddMeasure('Automatic addition') #debating the necessity of this#
 
         somethingWasAdded = False
-        #here I am defining an "interesting" state as one where there is great diversity amoung the patterns being played
-        #ie, max(self.currentState), max(self.currentState) - 1, max(self.currentState) - 2, are each approximately a third
-        #This function finds that, and then stays both in "intersting" states and "not interesting" states for a time 
-        #proporitonal to the number of voices (that is, more voices means a longer time for both)
         for i in range(1, len(self.voices)):
             if self.voices[i].GetCurrentPattern() != self.voices[i-1].GetCurrentPattern():
                 somethingWasAdded = True
@@ -232,7 +315,6 @@ class Composition:
 ###############################################################################################################################################################
 #accompaniment creation methods
     def CreateAccompaniment(self):
-        #finish
         return
 
 ###############################################################################################################################################################
@@ -268,4 +350,6 @@ class Composition:
 
 ###############################################################################################################################################################
 
-Composition(7, 120) #(number of voices, tempo in quarter bpms)
+numberOfVoices = 12
+tempoInQuarterNoteBeatsPerMinute = 120
+Composition(numberOfVoices, tempoInQuarterNoteBeatsPerMinute)
