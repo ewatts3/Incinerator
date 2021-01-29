@@ -24,6 +24,9 @@
     <Compile Include="Composition.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Dynamic.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Note.py">
       <SubType>Code</SubType>
     </Compile>

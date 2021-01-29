@@ -1,6 +1,7 @@
 import pretty_midi
 from Voice import Voice
 from Patterns import Patterns
+from Dynamic import Dynamic
 import os
 import random
 
@@ -10,6 +11,7 @@ class Composition:
     def __init__(self, numberOfVoices, tempo):
         self.lengthOfSixteenthNote = self.FindLengthOfSixteenthNote(tempo)
         self.voices = self.MakeVoices(numberOfVoices)
+        self.dynamic = Dynamic()
 
         self.numberOfUnisons = 0
         self.patternOfLastUnison = 0
@@ -59,6 +61,8 @@ class Composition:
         self.MakeIntro()
 
         while self.CheckIfAllVoicesAreDone() is False: 
+            self.dynamic.DecideDynamic()
+
             self.CatchUpOffBeatVoices() #we only want to add something when it's on a proper eighth note beat to avoid innappropriate polyrhythms
             
             self.GetCurrentState()
@@ -83,7 +87,7 @@ class Composition:
     def CatchUpOffBeatVoices(self):
         for i in range(0, len(self.voices)):
                 while(self.voices[i].IsNotOnAnEighthNoteBeat(self.lengthOfSixteenthNote)):
-                    self.voices[i].AddPattern()
+                    self.voices[i].AddPattern(self.dynamic.GetCurrentDynamic())
                     self.WriteTxtFile('Fixing off beat voice ' + str(i) + '\n')
         return
 
@@ -119,10 +123,13 @@ class Composition:
         for i in range(0, 9):
             self.AddMeasure('Automatic unison ending measure')
 
+        self.dynamic.InitializeDynamicForEnding()
+
         someAreStillPlaying = True
         while(someAreStillPlaying is True): #true while not empty
             self.AddMeasure('Unison ending measure')
             self.GetPlace()
+            self.dynamic.ChangeDynamicForEnding()
 
             unfinishedVoices = []
             someAreStillPlaying = False
@@ -303,7 +310,7 @@ class Composition:
 
     def ProgressVoices(self, voices):
         for i in range(0, len(voices)):
-            voices[i].AddPattern()
+            voices[i].AddPattern(self.dynamic.GetCurrentDynamic())
         return
 
     def UpdateTxtFile(self, string):
@@ -321,7 +328,7 @@ class Composition:
 #file writing methods
     def CheckPatterns(self): #for TESTING ONLY
         for i in range(0, len(self.voices[0].GetAllPatterns())):
-            self.voices[0].AddPattern()
+            self.voices[0].AddPattern(self.dynamic.GetCurrentDynamic())
             self.voices[0].ChangePattern()
         return
 

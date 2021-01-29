@@ -7,6 +7,7 @@ class Pattern:
         self.pattern = []
         self.length = 0
         self.place = 0
+        self.dynamic = 63
         return
 
     def AddNote(self, letter, octave, rhythmicValue):
@@ -71,7 +72,11 @@ class Pattern:
     def GetLength(self):
         return self.length
 
+    def SetDynamic(self, dynamic):
+        self.dynamic = dynamic
+        return
+
     def GetMIDIData(self, instrument, place):
         for i in range(0, len(self.pattern)):
-            instrument.notes.append(self.pattern[i].GetMIDIData(place))
+            instrument.notes.append(self.pattern[i].GetMIDIData(place, self.dynamic))
         return

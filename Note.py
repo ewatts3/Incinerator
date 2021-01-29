@@ -8,8 +8,8 @@ class Note:
         self.endInMeasure = end
         return
 
-    def GetMIDIData(self, place):
-        note = pretty_midi.Note(velocity=100,
+    def GetMIDIData(self, place, dynamic):
+        note = pretty_midi.Note(velocity=dynamic,
                                pitch=pretty_midi.note_name_to_number(self.letterName + str(self.octaveNumber)),
                                start=place + self.startInMeasure,
                                end=place + self.endInMeasure)

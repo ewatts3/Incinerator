@@ -12,8 +12,9 @@ class Voice:
         self.isNotOnAnEightNoteBeat = False
         return
 
-    def AddPattern(self):
+    def AddPattern(self, dynamic):
         self.patterns.append(self.allPatterns[self.currentPattern])
+        self.patterns[len(self.patterns) - 1].SetDynamic(dynamic)
         self.place = self.place + self.allPatterns[self.currentPattern].GetLength()
         self.timeOnCurrentPattern = self.timeOnCurrentPattern + self.allPatterns[self.currentPattern].GetLength()
         self.wasChangedThisIteration = False
