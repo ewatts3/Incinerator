@@ -21,7 +21,7 @@ class Composition:
         #self.CheckPatterns() #TESTING ONLY
         self.CreateComposition()
         #self.CreateAccompaniment() #todo
-        self.WriteMIDIFiles()
+        #self.WriteMIDIFiles()
         return
 
     def MakeVoices(self, numberOfVoices):
@@ -61,7 +61,9 @@ class Composition:
         self.MakeIntro()
 
         while self.CheckIfAllVoicesAreDone() is False: 
-            self.dynamic.DecideDynamic()
+            #self.dynamic.DecideDynamic()
+
+            self.WriteTxtFile(str(self.dynamic.GetCurrentDynamic()))
 
             self.CatchUpOffBeatVoices() #we only want to add something when it's on a proper eighth note beat to avoid innappropriate polyrhythms
             
@@ -120,16 +122,21 @@ class Composition:
         return
 
     def MakeEnding(self):
-        for i in range(0, 9):
-            self.AddMeasure('Automatic unison ending measure')
-
-        self.dynamic.InitializeDynamicForEnding()
+        self.WriteTxtFile('Making ending...\n')
+        #longestVoiceTime = self.place
+        #for k in range(0, len(self.voices)):
+        #    while(self.voices[k].GetPlace() < longestVoiceTime):
+        #        self.voices[k].AddPattern(self.dynamic.GetCurrentDynamic())
+        #self.dynamic.InitializeDynamicForEnding()
+        #self.WriteTxtFile('All voices are on final pattern\n')
+        self.WriteTxtFile(str(self.dynamic.GetCurrentDynamic()) + '\n')
 
         someAreStillPlaying = True
         while(someAreStillPlaying is True): #true while not empty
             self.AddMeasure('Unison ending measure')
             self.GetPlace()
-            self.dynamic.ChangeDynamicForEnding()
+            #self.dynamic.ChangeDynamicForEnding()
+            self.WriteTxtFile(str(self.dynamic.GetCurrentDynamic()) + '\n')
 
             unfinishedVoices = []
             someAreStillPlaying = False
@@ -151,9 +158,13 @@ class Composition:
                 if (self.numberOfUnisons == 1):
                     self.numberOfPatternsSinceLastUnison = max(self.currentState) - self.patternOfLastUnison
                 else:
-                    self.numberOfPatternsSinceLastUnison = 5 #so next conditional evaluates to true
-                if(self.numberOfPatternsSinceLastUnison >= 5):
-                    becomeUnison = self.DecideIfCompositionShouldBecomeUnison()
+                    self.numberOfPatternsSinceLastUnison = 10 #so next conditional evaluates to true
+                if(self.numberOfPatternsSinceLastUnison >= 10):
+                    #becomeUnison = self.DecideIfCompositionShouldBecomeUnison()
+                    if(random.randint(0, 19) == 0):
+                        becomeUnison = True
+                    else:
+                        becomeUnison = False
                     if(becomeUnison is True):
                         self.BecomeUnison()
         return
@@ -282,6 +293,8 @@ class Composition:
 ###############################################################################################################################################################
 #methods for adding measures
     def AddMeasure(self, stringForOutputFile):
+        self.dynamic.DecideDynamic()
+
         voicesToAddMeasuresForBasedOnLength = self.GetVoicesToAddMeasuresForBasedOnTheirLength()
 
         voicesToProgress = self.GetAllVoicesToProgress(voicesToAddMeasuresForBasedOnLength)
@@ -357,6 +370,6 @@ class Composition:
 
 ###############################################################################################################################################################
 
-numberOfVoices = 12
+numberOfVoices = 12 #12
 tempoInQuarterNoteBeatsPerMinute = 120
 Composition(numberOfVoices, tempoInQuarterNoteBeatsPerMinute)

@@ -7,9 +7,7 @@ Refine decision making for:
 	How long a state should last (again more factors)
 Needs to be shorter
 Check unison - sounds good / happens twice sometimes
-Dynamics - Make smarter
-	Throughout piece
-	For ending - align all for unison dynamics?
+Dynamics - For ending - align all for unison dynamics?
 
 From TR himself:
 Have voices drop out

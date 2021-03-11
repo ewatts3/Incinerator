@@ -10,6 +10,7 @@ class Voice:
         self.timeOnCurrentPattern = 0
         self.wasChangedThisIteration = False #we don't want to skip patterns, so this ensures that a voice only gets changed once per each iteration
         self.isNotOnAnEightNoteBeat = False
+        self.isSilent = False
         return
 
     def AddPattern(self, dynamic):
@@ -25,6 +26,7 @@ class Voice:
             self.currentPattern = self.currentPattern + 1
             self.timeOnCurrentPattern = 0
             self.wasChangedThisIteration = True
+        self.isSilent = True
         return
 
     def ChangePatternForEnding(self):
