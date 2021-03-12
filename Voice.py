@@ -1,16 +1,17 @@
 import pretty_midi
 from Pattern import Pattern
+import random
+from Silence import Silence
 
 class Voice:
     def __init__(self, ap):
-        self.patterns = []
-        self.allPatterns = ap
+        self.patterns = [] #complete performance
+        self.allPatterns = ap #just the set of 53
         self.currentPattern = 0
         self.place = 0
         self.timeOnCurrentPattern = 0
         self.wasChangedThisIteration = False #we don't want to skip patterns, so this ensures that a voice only gets changed once per each iteration
         self.isNotOnAnEightNoteBeat = False
-        self.isSilent = False
         return
 
     def AddPattern(self, dynamic):
@@ -26,7 +27,6 @@ class Voice:
             self.currentPattern = self.currentPattern + 1
             self.timeOnCurrentPattern = 0
             self.wasChangedThisIteration = True
-        self.isSilent = True
         return
 
     def ChangePatternForEnding(self):
@@ -59,7 +59,30 @@ class Voice:
     def GetMIDIData(self):
         self.place = 0
         instrument = pretty_midi.Instrument(program=pretty_midi.instrument_name_to_program('Cello'))
-        for i in range(0, len(self.patterns)):
-            self.patterns[i].GetMIDIData(instrument, self.place)
-            self.place = self.place + self.patterns[i].GetLength()
+        i = 0
+        while(i < len(self.patterns)):
+            if(i > 0 and i < len(self.patterns) - 1):
+                if(self.patterns[i].GetID() != self.patterns[i - 1].GetID() or self.patterns[i].GetID() != self.patterns[i + 1].GetID()): #only include silences between patterns
+                    if(random.randint(0, 99) == 0): #decide / make silences
+                        print('here')
+                        if(len(self.patterns) - i > 25): #avoid going out of range
+                            for j in range(0, random.randint(0, 25)): #random length of silence
+                                self.place = self.place + self.patterns[i].GetLength() #replace patterns with silence
+                                i = i + 1
+                        else:
+                            self.patterns[i].GetMIDIData(instrument, self.place)
+                            self.place = self.place + self.patterns[i].GetLength()
+                            i = i + 1
+                    else:
+                        self.patterns[i].GetMIDIData(instrument, self.place)
+                        self.place = self.place + self.patterns[i].GetLength()
+                        i = i + 1
+                else:
+                    self.patterns[i].GetMIDIData(instrument, self.place)
+                    self.place = self.place + self.patterns[i].GetLength()
+                    i = i + 1
+            else:
+                self.patterns[i].GetMIDIData(instrument, self.place)
+                self.place = self.place + self.patterns[i].GetLength()
+                i = i + 1
         return instrument

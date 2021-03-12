@@ -9,7 +9,6 @@ class Note:
         return
 
     def GetMIDIData(self, place, dynamic):
-        print(dynamic)
         note = pretty_midi.Note(velocity=dynamic,
                                pitch=pretty_midi.note_name_to_number(self.letterName + str(self.octaveNumber)),
                                start=place + self.startInMeasure,

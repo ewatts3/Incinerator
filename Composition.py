@@ -21,7 +21,7 @@ class Composition:
         #self.CheckPatterns() #TESTING ONLY
         self.CreateComposition()
         #self.CreateAccompaniment() #todo
-        #self.WriteMIDIFiles()
+        self.WriteMIDIFiles()
         return
 
     def MakeVoices(self, numberOfVoices):
@@ -36,6 +36,8 @@ class Composition:
                 register = j
                 patterns = Patterns(self.lengthOfSixteenthNote, register)
                 allPatterns = patterns.GetAllPatterns()
+                for k in range(0, len(allPatterns)):
+                    allPatterns[k].SetID(k)
                 voices.append(Voice(allPatterns))
 
         #for j in range(4, 2, -1):

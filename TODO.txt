@@ -1,20 +1,23 @@
-Infinite loop issue?
+Code:
+Refactor voice GetMIDI Data
+Create class for unisons
+
+From TR himself:
+Augementing rhythmic values (do in Voice class)
 
 Composing:
+Needs to be shorter
+Dynamics - For ending - align all for unison dynamics?
 Refine decision making for:
 	When to end each voice
 	When a voice should change (add more factors)
 	How long a state should last (again more factors)
-Needs to be shorter
-Check unison - sounds good / happens twice sometimes
-Dynamics - For ending - align all for unison dynamics?
-
-From TR himself:
-Have voices drop out
-Transposing? Augementing rhythmic values?
 
 QOL:
 Make piano comp instrument
 Make drum comp instrument
-Buy full Ableton lmao
+Buy full Ableton
+
+Notes:
+No transposing - no "stepping on each others toes - would change if have more variety of timbres
 
