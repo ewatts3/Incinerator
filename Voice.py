@@ -60,29 +60,18 @@ class Voice:
         self.place = 0
         instrument = pretty_midi.Instrument(program=pretty_midi.instrument_name_to_program('Cello'))
         i = 0
-        while(i < len(self.patterns)):
-            if(i > 0 and i < len(self.patterns) - 1):
-                if(self.patterns[i].GetID() != self.patterns[i - 1].GetID() or self.patterns[i].GetID() != self.patterns[i + 1].GetID()): #only include silences between patterns
-                    if(random.randint(0, 99) == 0): #decide / make silences
-                        print('here')
-                        if(len(self.patterns) - i > 25): #avoid going out of range
-                            for j in range(0, random.randint(0, 25)): #random length of silence
-                                self.place = self.place + self.patterns[i].GetLength() #replace patterns with silence
-                                i = i + 1
-                        else:
-                            self.patterns[i].GetMIDIData(instrument, self.place)
-                            self.place = self.place + self.patterns[i].GetLength()
-                            i = i + 1
-                    else:
-                        self.patterns[i].GetMIDIData(instrument, self.place)
-                        self.place = self.place + self.patterns[i].GetLength()
-                        i = i + 1
-                else:
-                    self.patterns[i].GetMIDIData(instrument, self.place)
-                    self.place = self.place + self.patterns[i].GetLength()
-                    i = i + 1
-            else:
-                self.patterns[i].GetMIDIData(instrument, self.place)
-                self.place = self.place + self.patterns[i].GetLength()
-                i = i + 1
+        while(i < len(self.patterns) - 1):
+            i = self.DecideIfVoiceShouldDropOut(i)
+            self.patterns[i].GetMIDIData(instrument, self.place)
+            self.place = self.place + self.patterns[i].GetLength()
+            i = i + 1
         return instrument
+
+    def DecideIfVoiceShouldDropOut(self, i):
+        index = i
+        if(random.randint(0, 499) == 0 and self.patterns[index].GetID() != len(self.allPatterns) - 1): #decide when to make silences within the range of the array
+            currentPattern = self.patterns[index].GetID()
+            while(currentPattern == self.patterns[index].GetID()): #replace patterns with silence until the new pattern is reached
+                self.place = self.place + self.patterns[index].GetLength() #replace patterns with silence
+                index = index + 1
+        return index
