@@ -2,6 +2,7 @@ import pretty_midi
 from Voice import Voice
 from Patterns import Patterns
 from Dynamic import Dynamic
+from Unison import Unison
 import os
 import random
 
@@ -12,13 +13,9 @@ class Composition:
         self.lengthOfSixteenthNote = self.FindLengthOfSixteenthNote(tempo)
         self.voices = self.MakeVoices(numberOfVoices)
         self.dynamic = Dynamic()
-
-        self.numberOfUnisons = 0
-        self.patternOfLastUnison = 0
-        self.numberOfPatternsSinceLastUnison = 0
+        self.unison = Unison()
 
         self.CreateTxtFile() #for manually analyzing data
-        #self.CheckPatterns() #TESTING ONLY
         self.CreateComposition()
         #self.CreateAccompaniment() #todo
         self.WriteMIDIFiles()
@@ -39,6 +36,7 @@ class Composition:
                 for k in range(0, len(allPatterns)):
                     allPatterns[k].SetID(k)
                 voices.append(Voice(allPatterns))
+        self.numberOfPatterns = len(allPatterns) + 1
 
         #for j in range(4, 2, -1):
         #    register = j
@@ -155,49 +153,13 @@ class Composition:
 ###############################################################################################################################################################
 #methods for deciding if composition will become a unison
     def UnisonCheck(self):
-        if(self.numberOfUnisons < 2):
-            if(min(self.currentState) > 10 and max(self.currentState) < 50):
-                if (self.numberOfUnisons == 1):
-                    self.numberOfPatternsSinceLastUnison = max(self.currentState) - self.patternOfLastUnison
-                else:
-                    self.numberOfPatternsSinceLastUnison = 10 #so next conditional evaluates to true
-                if(self.numberOfPatternsSinceLastUnison >= 10):
-                    #becomeUnison = self.DecideIfCompositionShouldBecomeUnison()
-                    if(random.randint(0, 19) == 0):
-                        becomeUnison = True
-                    else:
-                        becomeUnison = False
-                    if(becomeUnison is True):
-                        self.BecomeUnison()
+        becomeUnison = self.unison.DecideIfCompositionShouldBecomeUnison(min(self.currentState), max(self.currentState), self.numberOfPatterns)
+        if(becomeUnison is True):
+            self.BecomeUnison()
         return
 
-    def DecideIfCompositionShouldBecomeUnison(self):
-        patternOne = max(self.currentState)
-        patternTwo = patternOne - 1
-        patternThree = patternOne - 2
-        numberOfPatternOne = 0
-        numberOfPatternTwo = 0
-        numberOfPatternThree = 0
-        for i in range(0, len(self.voices)):
-            if(self.voices[i].GetCurrentPattern() == patternOne):
-                numberOfPatternOne = numberOfPatternOne + 1
-            elif(self.voices[i].GetCurrentPattern() == patternTwo):
-                numberOfPatternTwo = numberOfPatternTwo + 1
-            else:
-                numberOfPatternThree = numberOfPatternThree + 1
-        averageOccurenceOfPatterns = numberOfPatternOne + numberOfPatternTwo + numberOfPatternThree / 3
-
-        if(averageOccurenceOfPatterns >= 33 and averageOccurenceOfPatterns <= 36):
-            return True
-        else:
-            return False
-
     def BecomeUnison(self):
-        self.numberOfUnisons = self.numberOfUnisons + 1
-        self.numberOfPatternsSinceLastUnison = 0
-        self.patternOfLastUnison = max(self.currentState)
         self.WriteTxtFile('Composition will become a unison...\n')
-
         isAUnison = False
         while(isAUnison is False):
             isAUnison = True
@@ -214,7 +176,7 @@ class Composition:
         return
 
 ###############################################################################################################################################################
-#methods for catching up / moving voices going on for too long, and transitioning them
+#methods for catching up voices or moving voices going on for too long, and transitioning them
     def CatchUpLaggingVoices(self):
         laggingVoices = self.GetLaggingVoices()
         self.TransitionVoices(laggingVoices)
@@ -372,6 +334,6 @@ class Composition:
 
 ###############################################################################################################################################################
 
-numberOfVoices = 12 #12
+numberOfInstruments = 12 #the number of output files for voices is this number times 3
 tempoInQuarterNoteBeatsPerMinute = 120
-Composition(numberOfVoices, tempoInQuarterNoteBeatsPerMinute)
+Composition(numberOfInstruments, tempoInQuarterNoteBeatsPerMinute)

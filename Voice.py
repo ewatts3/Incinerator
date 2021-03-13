@@ -1,7 +1,6 @@
 import pretty_midi
 from Pattern import Pattern
 import random
-from Silence import Silence
 
 class Voice:
     def __init__(self, ap):

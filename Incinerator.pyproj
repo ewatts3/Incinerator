@@ -34,7 +34,7 @@
     <Compile Include="Pattern.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Silence.py">
+    <Compile Include="Unison.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Voice.py">
