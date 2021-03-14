@@ -43,11 +43,11 @@ class Dynamic:
             self.isIncreasing = not self.isIncreasing
 
         if self.isIncreasing is True:
-            self.currentDynamic = self.currentDynamic + 19
+            self.currentDynamic = self.currentDynamic + 5
             if self.currentDynamic > self.maxDynamic:
                 self.currentDynamic = self.maxDynamic
         elif self.isIncreasing is False:
-            self.currentDynamic = self.currentDynamic - 19
+            self.currentDynamic = self.currentDynamic - 5
             if self.currentDynamic < self.minimumDynamic:
                 self.currentDynamic = self.minimumDynamic
         return

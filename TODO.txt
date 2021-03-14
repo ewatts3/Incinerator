@@ -1,17 +1,10 @@
-Code:
-Refactor voice GetMIDI Data
-Create class for unisons
-
-From TR himself:
-Augementing rhythmic values (do in Voice class)
+Completely refactor with better planning?
 
 Composing:
-Needs to be shorter
-Dynamics - For ending - align all for unison dynamics?
 Refine decision making for:
 	When to end each voice
 	When a voice should change (add more factors)
-	How long a state should last (again more factors)
+	How many times a state should be repeated (again more factors)
 
 QOL:
 Make piano comp instrument
@@ -20,4 +13,8 @@ Buy full Ableton
 
 Notes:
 No transposing - no "stepping on each others toes - would change if have more variety of timbres
+Augmenting values - ITS FACKIN HARD
+Dynamics - do manually (increment of velocity too small?)
+
+5232220002230442 0721 272 Darren 
 

@@ -28,6 +28,9 @@ class Voice:
             self.wasChangedThisIteration = True
         return
 
+    def GetPatterns(self):
+        return self.patterns
+
     def ChangePatternForEnding(self):
         self.currentPattern = self.currentPattern + 1
         return
@@ -54,6 +57,12 @@ class Voice:
             else:
                 return False
         return False
+
+    def DeletePattern(self, measureToRemove):
+        if(self.patterns[measureToRemove].GetID() != len(self.allPatterns) - 2):
+            removedMeasure = self.patterns.pop(measureToRemove)
+            self.place = self.place - removedMeasure.GetLength()
+        return
 
     def GetMIDIData(self):
         self.place = 0

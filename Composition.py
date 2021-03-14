@@ -15,20 +15,46 @@ class Composition:
         self.dynamic = Dynamic()
         self.unison = Unison()
 
+        #self.DynamicTest()
+
         self.CreateTxtFile() #for manually analyzing data
         self.CreateComposition()
         #self.CreateAccompaniment() #todo
         self.WriteMIDIFiles()
         return
 
+    def DynamicTest(self):
+        pm = pretty_midi.PrettyMIDI()
+        instrument = pretty_midi.Instrument(program=pretty_midi.instrument_name_to_program('Cello'))
+        place = 0
+        i = 0
+        while(i <= 127):
+            noteOne = pretty_midi.Note(velocity=i,
+                    pitch=pretty_midi.note_name_to_number('Bb4'),
+                    start=place,
+                    end=place + .25)
+            noteTwo = pretty_midi.Note(velocity=i,
+                    pitch=pretty_midi.note_name_to_number('G4'),
+                    start=place + .25,
+                    end=place + .5)
+            instrument.notes.append(noteOne)
+            instrument.notes.append(noteTwo)
+            place = place + .5
+            i = i + 20
+        pm.instruments.append(instrument)
+        pm.write('dynamicTest.mid')
+        return
+
     def MakeVoices(self, numberOfVoices):
         voices = []
+
+        #this one is one voice per voice input - for 8 or less instruments
         #for i in range(numberOfVoices, 1, -1):
         #   patterns = Patterns(self.lengthOfSixteenthNote, i)
         #    allPatterns = patterns.GetAllPatterns()
         #    voices.append(Voice(allPatterns))
 
-        for i in range(0, numberOfVoices): #number of unique instruments really
+        for i in range(0, numberOfVoices): #number of unique instruments, with each having distinct ranges (4 voices in 4 octaves per instrument)
             for j in range(5, 2, -1):
                 register = j
                 patterns = Patterns(self.lengthOfSixteenthNote, register)
@@ -37,13 +63,6 @@ class Composition:
                     allPatterns[k].SetID(k)
                 voices.append(Voice(allPatterns))
         self.numberOfPatterns = len(allPatterns) + 1
-
-        #for j in range(4, 2, -1):
-        #    register = j
-        #    for i in range(0, numberOfVoices):
-        #        patterns = Patterns(self.lengthOfSixteenthNote, register)
-        #        allPatterns = patterns.GetAllPatterns()
-        #        voices.append(Voice(allPatterns))
 
         return voices
 
@@ -61,9 +80,7 @@ class Composition:
         self.MakeIntro()
 
         while self.CheckIfAllVoicesAreDone() is False: 
-            #self.dynamic.DecideDynamic()
-
-            self.WriteTxtFile(str(self.dynamic.GetCurrentDynamic()))
+            self.WriteTxtFile(str(self.dynamic.GetCurrentDynamic()) + '\n')
 
             self.CatchUpOffBeatVoices() #we only want to add something when it's on a proper eighth note beat to avoid innappropriate polyrhythms
             
@@ -82,6 +99,8 @@ class Composition:
             self.GetPlace()
 
         self.MakeEnding()
+
+        self.AdjustLength()
         return
 
 ###############################################################################################################################################################
@@ -93,13 +112,13 @@ class Composition:
                     self.WriteTxtFile('Fixing off beat voice ' + str(i) + '\n')
         return
 
-    def GetCurrentState(self):
+    def GetCurrentState(self): #a "state" is an array of the current pattern for each voice
         self.currentState = []
         for i in range(0, len(self.voices)):
             self.currentState.append(self.voices[i].GetCurrentPattern())
         return
 
-    def GetPlace(self):
+    def GetPlace(self): #current length of whole piece
         allPlaces = []
         for i in range(0, len(self.voices)):
             allPlaces.append(self.voices[i].GetPlace())
@@ -111,8 +130,21 @@ class Composition:
         for i in range(0, len(self.voices)):
             if self.voices[i].IsNotOnLastPattern():
                 allVoicesDone = False
-                i = len(self.voices)
         return allVoicesDone
+
+    def AdjustLength(self): #trim to recommend length if too long
+        lengthOfPiece = random.randint(43, 47)
+        self.GetPlace()
+        smallestVoiceSize = len(self.voices[0].GetPatterns())
+        while((self.place / 60) > lengthOfPiece):
+            for i in range(0, len(self.voices)):
+                if(smallestVoiceSize > len(self.voices[i].GetPatterns())):
+                    smallestVoiceSize = len(self.voices[i].GetPatterns())
+            measureToRemove = random.randint(0, smallestVoiceSize - 1)
+            for j in range(0, len(self.voices)):
+                self.voices[j].DeletePattern(measureToRemove)
+            self.GetPlace()
+        return
 
 ###############################################################################################################################################################
 #edge cases
@@ -123,31 +155,49 @@ class Composition:
 
     def MakeEnding(self):
         self.WriteTxtFile('Making ending...\n')
-        #longestVoiceTime = self.place
-        #for k in range(0, len(self.voices)):
-        #    while(self.voices[k].GetPlace() < longestVoiceTime):
-        #        self.voices[k].AddPattern(self.dynamic.GetCurrentDynamic())
-        #self.dynamic.InitializeDynamicForEnding()
-        #self.WriteTxtFile('All voices are on final pattern\n')
-        self.WriteTxtFile(str(self.dynamic.GetCurrentDynamic()) + '\n')
+        self.GetAllVoicesToSamePlace()
 
         someAreStillPlaying = True
         while(someAreStillPlaying is True): #true while not empty
-            self.AddMeasure('Unison ending measure')
+            someAreStillPlaying = False
+            self.AddMeasureForEnding('Unison ending measure')
             self.GetPlace()
-            #self.dynamic.ChangeDynamicForEnding()
+            
             self.WriteTxtFile(str(self.dynamic.GetCurrentDynamic()) + '\n')
 
-            unfinishedVoices = []
-            someAreStillPlaying = False
-            for j in range(0, len(self.voices)):
-                if(self.voices[j].GetCurrentPattern() < 54):
-                    unfinishedVoices.append(j)
-                    someAreStillPlaying = True
-            if(someAreStillPlaying is True) and (random.randint(0, 2) == 0): #randomly pick when and which one to get rid of
+            unfinishedVoices = self.GetUnfinishedVoices()
+            if(unfinishedVoices): #if it's not empty
+                someAreStillPlaying = True
+
+            if((someAreStillPlaying is True) and (random.randint(0, 2) == 0)): #randomly pick when and which one to get rid of
                 self.voices[unfinishedVoices[random.randint(0, len(unfinishedVoices) - 1)]].ChangePatternForEnding()
 
         self.WriteTxtFile(str(self.place / 60)) #length of whole piece
+        return
+
+    def GetAllVoicesToSamePlace(self):
+        longestVoiceTime = self.place
+        for k in range(0, len(self.voices)):
+            while(self.voices[k].GetPlace() < longestVoiceTime):
+                self.voices[k].AddPattern(self.dynamic.GetCurrentDynamic())
+                #print(self.voices[k].GetPlace())
+            #print('DONE' + str(k) + ' ' + str(self.voices[k].GetPlace()))
+        self.dynamic.InitializeDynamicForEnding()
+        self.WriteTxtFile('All voices are on final pattern\n')
+        self.WriteTxtFile(str(self.dynamic.GetCurrentDynamic()) + '\n')
+        return
+
+    def GetUnfinishedVoices(self):
+        unfinishedVoices = []
+        for j in range(0, len(self.voices)):
+            if(self.voices[j].GetCurrentPattern() < 54):
+                unfinishedVoices.append(j)
+        return unfinishedVoices
+
+    def AddMeasureForEnding(self, stringForOutputFile):
+        self.dynamic.ChangeDynamicForEnding()
+        self.ProgressVoices(self.voices)
+        self.UpdateTxtFile(stringForOutputFile)
         return
 
 ###############################################################################################################################################################
@@ -190,7 +240,7 @@ class Composition:
                 laggingVoices.append(self.voices[i])
         return laggingVoices
 
-    def ChangeVoicesIfTheyAreGoingOnForTooLong(self):
+    def ChangeVoicesIfTheyAreGoingOnForTooLong(self): #too long on one pattern
         voicesGoingOnForTooLong = self.GetVoicesThatAreGoingOnForTooLong()
         self.TransitionVoices(voicesGoingOnForTooLong)
         return
@@ -241,7 +291,7 @@ class Composition:
 ###############################################################################################################################################################
 #methods for deciding how many times to repeat a pattern
     def DecideHowLongToStayInThisState(self):
-        #self.AddMeasure('Automatic addition') #debating the necessity of this#
+        #self.AddMeasure('Automatic addition') #debating the necessity of this
 
         somethingWasAdded = False
         for i in range(1, len(self.voices)):
@@ -299,11 +349,12 @@ class Composition:
 ###############################################################################################################################################################
 #accompaniment creation methods
     def CreateAccompaniment(self):
+        #todo
         return
 
 ###############################################################################################################################################################
 #file writing methods
-    def CheckPatterns(self): #for TESTING ONLY
+    def CheckPatterns(self): #for TESTING ONLY - to see if the patterns made in Pattern.py are correct
         for i in range(0, len(self.voices[0].GetAllPatterns())):
             self.voices[0].AddPattern(self.dynamic.GetCurrentDynamic())
             self.voices[0].ChangePattern()
